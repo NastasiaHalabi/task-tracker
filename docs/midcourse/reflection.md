@@ -1,0 +1,9 @@
+# Reflection
+
+I used Cursor Agent primarily as a paired implementer: first to survey the existing FastAPI + in-memory storage + Kanban frontend, then to draft scoped designs for two features (due dates/overdue filter and tags), then to generate backend model/storage/route changes, pytest cases, and the relatively mechanical frontend wiring. I kept ownership by choosing the two features myself, writing the mini-ADR constraints before coding, and rejecting larger suggestions such as a normalized Tag table or client-only overdue logic.
+
+One moment AI clearly helped was turning acceptance criteria into a tight pytest module quickly. Having eight focused tests early made it obvious when a timezone bug slipped in: manual checks using local `date.today()` disagreed with overdue computation based on UTC. That failure would have been easy to miss without both automated overdue filter tests and a quick API script.
+
+One moment AI slowed me down was the first overdue design pass that mixed persisted flags, UI-only computation, and API filters. Untangling those options cost time I could have spent on the frontend filter bar. The fix was to constrain the next prompt harder (“computed field, UTC today, query param, no new tables”) and stick to the ADR.
+
+My review changed the result in a concrete way: after the first implementation I insisted on `utc_today()` / `compute_is_overdue()` helpers and updated tests to use the same clock. Without that review, overdue behavior would have been flaky for anyone not on UTC. I also trimmed the UI so filters stayed a compact bar above the board instead of a heavier dashboard. Overall the workflow—plan, constrain, implement in layers, Break Test, document—kept the features small enough to verify end-to-end while still showing responsible AI use rather than blind acceptance of generated code.
