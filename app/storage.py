@@ -14,6 +14,14 @@ _tasks: dict[str, TaskResponse] = {}
 
 
 def add_task(payload: TaskCreate) -> TaskResponse:
+    """Create a new task and store it.
+
+    Args:
+        payload (TaskCreate): The task data to create.
+
+    Returns:
+        TaskResponse: The newly created and stored task.
+    """
     now = datetime.now(timezone.utc)
     task_id = uuid4().hex
     task = TaskResponse(
@@ -41,6 +49,22 @@ def list_tasks(
     overdue: Optional[bool] = None,
     tag: Optional[str] = None,
 ) -> list[TaskResponse]:
+    """Return stored tasks, optionally filtered, sorted by creation time.
+
+    Args:
+        status (Optional[TaskStatus]): Filter to tasks with this exact
+            status.
+        priority (Optional[TaskPriority]): Filter to tasks with this exact
+            priority.
+        overdue (Optional[bool]): When True, restrict to overdue tasks; when
+            False, restrict to non-overdue tasks; when None, no filtering.
+        tag (Optional[str]): Case-insensitive exact match against one of the
+            task's tags.
+
+    Returns:
+        list[TaskResponse]: Matching tasks sorted by ``created_at``
+            ascending.
+    """
     tasks = list(_tasks.values())
     if status is not None:
         tasks = [t for t in tasks if t.status == status]
@@ -59,6 +83,15 @@ def list_tasks(
 
 
 def get_task(task_id: str) -> Optional[TaskResponse]:
+    """Look up a stored task by id.
+
+    Args:
+        task_id (str): The id of the task to retrieve.
+
+    Returns:
+        Optional[TaskResponse]: The matching task, or None if no task with
+            that id exists.
+    """
     return _tasks.get(task_id)
 
 
@@ -69,6 +102,17 @@ def update_task(
     task_id: str,
     payload: TaskUpdate,
 ) -> Optional[TaskResponse]:
+    """Apply a partial update to a stored task.
+
+    Args:
+        task_id (str): The id of the task to update.
+        payload (TaskUpdate): The fields to update; fields left unset on
+            ``payload`` are not changed.
+
+    Returns:
+        Optional[TaskResponse]: The updated task, or None if no task with
+            that id exists.
+    """
     existing = _tasks.get(task_id)
     if existing is None:
         return None
@@ -83,6 +127,15 @@ def update_task(
 
 
 def delete_task(task_id: str) -> bool:
+    """Delete a stored task by id.
+
+    Args:
+        task_id (str): The id of the task to delete.
+
+    Returns:
+        bool: True if a task was deleted, False if no task with that id
+            existed.
+    """
     if task_id not in _tasks:
         return False
     del _tasks[task_id]

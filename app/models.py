@@ -9,12 +9,25 @@ MAX_TAG_LENGTH = 30
 
 
 def utc_today() -> date:
-    """Calendar date in UTC — used for overdue comparisons."""
+    """Return today's calendar date in UTC.
+
+    Returns:
+        date: The current date in UTC.
+    """
     return datetime.now(timezone.utc).date()
 
 
 def compute_is_overdue(due_date: Optional[date], status: "TaskStatus") -> bool:
-    """A task is overdue when it has a past due date and is not Done."""
+    """Determine whether a task is overdue.
+
+    Args:
+        due_date (Optional[date]): The task's due date, or None if unset.
+        status (TaskStatus): The task's current status.
+
+    Returns:
+        bool: True if ``due_date`` is in the past and ``status`` is not
+            ``TaskStatus.DONE``, False otherwise.
+    """
     if due_date is None:
         return False
     if status == TaskStatus.DONE:
@@ -91,7 +104,7 @@ class TaskUpdate(BaseModel):
     @classmethod
     def _title_not_blank(cls, v):
         if v is None:
-            return v
+            raise ValueError("Title cannot be null")
         v2 = v.strip()
         if not v2:
             raise ValueError("Title is required and cannot be blank")
@@ -99,11 +112,18 @@ class TaskUpdate(BaseModel):
             raise ValueError("Title must be 200 characters or fewer")
         return v2
 
+    @field_validator("description", "status", "priority")
+    @classmethod
+    def _non_nullable_fields_cannot_be_null(cls, v, info):
+        if v is None:
+            raise ValueError(f"{info.field_name} cannot be null")
+        return v
+
     @field_validator("tags")
     @classmethod
     def _tags_valid(cls, v):
         if v is None:
-            return v
+            raise ValueError("Tags cannot be null")
         return _normalize_tags(v)
 
 
