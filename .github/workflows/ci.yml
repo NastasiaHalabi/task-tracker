@@ -33,3 +33,36 @@ jobs:
 
       - name: Run tests
         run: pytest -v --tb=short
+
+  docker-smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build --tag task-tracker:final .
+
+      - name: Run Docker container
+        run: docker run --detach --name task-tracker-final --publish 8000:8000 task-tracker:final
+
+      - name: Verify container health endpoint
+        shell: bash
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error \
+              --output health-response.json \
+              http://127.0.0.1:8000/health; then
+              python -c 'import json; data=json.load(open("health-response.json")); assert data["status"] == "ok"'
+              cat health-response.json
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs task-tracker-final
+          exit 1
+
+      - name: Verify non-root runtime user
+        run: test "$(docker exec task-tracker-final id -u)" = "1000"
+
+      - name: Verify no environment file is baked into the image
+        run: docker exec task-tracker-final test ! -e /app/.env
