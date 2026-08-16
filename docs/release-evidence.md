@@ -4,6 +4,7 @@
 
 - Branch: `final-project`
 - Date: 2026-08-16
+- Public repository: `https://github.com/NastasiaHalabi/task-tracker`
 - Standard local app command: `python -m uvicorn app.main:app --reload --port 8000`
 - Verification command used: `venv\Scripts\python.exe -B -m uvicorn app.main:app --host 127.0.0.1 --port 8001` because an unrelated WSL relay already occupied port 8000.
 - `/health` result: `GET http://127.0.0.1:8001/health` returned HTTP 200 with `{"status":"ok","timestamp":"2026-08-16T12:49:42.502010+00:00"}`.
@@ -21,7 +22,7 @@
 - Test command used by CI: `pytest -v --tb=short`
 - Dependency installation: `pip install -r requirements.txt`
 - Shortcut check: no `continue-on-error`, no `|| true`, and pytest is not skipped.
-- Latest run link or note: to be added after `final-project` is pushed and the run completes.
+- Latest run: [CI run 31948234294](https://github.com/NastasiaHalabi/task-tracker/actions/runs/31948234294) completed successfully for commit `ae624936ba86a17642d84b01eb1f3135842a9738` on `final-project`.
 
 ## Docker evidence
 
