@@ -42,7 +42,7 @@
 - Create flow: created a High-priority task with `release` and `docs` tags; it appeared in `ToDo`.
 - Edit flow: changed the description and moved the task to `InProgress`; the updated card appeared in the correct column.
 - Filter flow: filtering by the `release` tag retained the matching task.
-- Owner check: the repository owner should repeat a brief create/edit check before submission so the human verification and ownership statement are personal.
+- Owner evidence: `docs/midcourse/verification.md` records the manual Kanban create, edit, overdue, and tag-filter checks completed during the course work; the final technical browser check above reconfirmed the create/edit/filter flow after the release corrections.
 
 ## Documentation claim-vs-reality log
 
